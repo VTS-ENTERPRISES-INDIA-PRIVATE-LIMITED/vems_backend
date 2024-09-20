@@ -34,10 +34,62 @@ const Vendordetails = () => {
 
     return (
         <div className="vendor-registration-container">
-            <div className="vendor-name-card">
-                <FaUser className="vendor-icon" />
-                <span>{VendorName || 'Vendor Name'}</span>
+            <div className="vendor-header-card">
+                <div className="vendor-info">
+                    <div className="vendor-icon">
+                        <img src="https://res.cloudinary.com/dlo7urgnj/image/upload/v1726825315/car_op9hch.webp" alt="Vendor Profile" />
+                    </div>
+                    <div className="vendor-details">
+                        <h2>Namma Ooru Taxi</h2>
+                        <p className="vendor-id">NOTVEN001</p>
+                        <p className="last-update">Last Update: 01 Jan 23, 10:00 am</p>
+                    </div>
+                </div>
+                <div className="vendor-status">
+                    <button className="active-button">ACTIVE</button>
+                    {/* <FaEdit className="edit-icon" />
+                    <FaTrash className="delete-icon" /> */}
+                </div>
             </div>
+            <div className="vendor-stats">
+                <div className="stat-item">
+                    <p className="stat-value">10</p>
+                    <p className="stat-label">Total Clients</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">30</p>
+                    <p className="stat-label">Total Sites</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">3000 Km</p>
+                    <p className="stat-label">Total Distance</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">102h 32m</p>
+                    <p className="stat-label">Total Hours</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">64</p>
+                    <p className="stat-label">Total Office Trips</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">₹50,00,000</p>
+                    <p className="stat-label">Total Revenue</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">40</p>
+                    <p className="stat-label">Total Vehicles</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">80</p>
+                    <p className="stat-label">Total Drivers</p>
+                </div>
+                <div className="stat-item">
+                    <p className="stat-value">01 Jan 2023</p>
+                    <p className="stat-label">Joined Date</p>
+                </div>
+            </div>
+
 
             <div className="personal-info">
                 <h3>Personal Information</h3>
