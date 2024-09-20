@@ -1,0 +1,101 @@
+/* Container for the registration form */
+.vendor-registration-container {
+    width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #e9f4f7;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-height: 600px; /* Limit the height of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    
+}
+.vendor-registration-container::-webkit-scrollbar{
+    overflow: hidden;
+}
+
+.vendor-registration-container h2{
+    text-align: center;
+}
+
+/* Card layout for the form */
+.registration-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Form container styling */
+.registration-form-container {
+    padding: 20px;
+}
+
+/* Section title styling */
+.form-section h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #35a6ac;
+    border-bottom: 2px solid #35a6ac;
+    padding-bottom: 5px;
+}
+
+/* Vertical layout for form fields */
+.vendor-registration-form {
+    display: block;  /* Block layout for vertical form */
+}
+
+/* Section styling */
+.form-section {
+    margin-bottom: 30px; /* Spacing between sections */
+}
+
+/* Style for each form field */
+.vendor-registration-form div {
+    margin-bottom: 15px;  /* Added more space between fields */
+}
+
+/* Form label styling */
+.vendor-registration-form label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Form input styling */
+.vendor-registration-form input {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* File input styling */
+.vendor-registration-form input[type="file"] {
+    padding: 4px;
+    border: none;
+}
+
+/* Button styling */
+.vendor-registration-form button {
+    width: 150px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #35a6ac;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+}
+
+.vendor-registration-form button:hover {
+    background-color: #2b9098;
+}
