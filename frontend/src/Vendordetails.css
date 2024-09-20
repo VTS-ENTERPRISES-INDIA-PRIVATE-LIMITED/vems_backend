@@ -1,101 +1,139 @@
-/* Container for the registration form */
+.vendor-name-card {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #007bff; 
+    color: white;
+    height: 70px;
+    padding: 0 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.vendor-name-card .vendor-icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
 .vendor-registration-container {
-    width: 600px;
-    margin: 50px auto;
+    width: calc(100vw - 20vw); 
+    margin-left: 20vw; 
+    padding: 20px;
+    background-color: #f9f9f9;
+    padding-top: 50px;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    box-sizing: border-box; 
+}
+
+.personal-info {
+    background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    background-color: #e9f4f7;
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-height: 600px; /* Limit the height of the container */
-    overflow-y: auto; /* Enable vertical scrolling */
-    
-}
-.vendor-registration-container::-webkit-scrollbar{
-    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
-.vendor-registration-container h2{
-    text-align: center;
-}
-
-/* Card layout for the form */
-.registration-card {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-/* Form container styling */
-.registration-form-container {
-    padding: 20px;
-}
-
-/* Section title styling */
-.form-section h3 {
+.personal-info h3 {
     font-size: 18px;
-    margin-bottom: 15px;
-    color: #35a6ac;
-    border-bottom: 2px solid #35a6ac;
-    padding-bottom: 5px;
-}
-
-/* Vertical layout for form fields */
-.vendor-registration-form {
-    display: block;  /* Block layout for vertical form */
-}
-
-/* Section styling */
-.form-section {
-    margin-bottom: 30px; /* Spacing between sections */
-}
-
-/* Style for each form field */
-.vendor-registration-form div {
-    margin-bottom: 15px;  /* Added more space between fields */
-}
-
-/* Form label styling */
-.vendor-registration-form label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 5px;
-    font-weight: bold;
     color: #333;
+    margin-bottom: 10px;
 }
 
-/* Form input styling */
-.vendor-registration-form input {
-    width: 90%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+.info-block {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.info-block p {
     font-size: 14px;
+    color: #555;
+    margin: 5px 0;
 }
 
-/* File input styling */
-.vendor-registration-form input[type="file"] {
-    padding: 4px;
-    border: none;
+.info-block svg {
+    margin-right: 10px;
+    color: #555;
 }
 
-/* Button styling */
-.vendor-registration-form button {
-    width: 150px;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background-color: #35a6ac;
-    color: #fff;
+.below-cards {
+    display: flex;
+    justify-content: space-between;
+}
+
+.verification-documents {
+    background-color: #fff;
+    flex: 0 0 48%;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.verification-documents h3 {
     font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 0 auto;
-    display: block;
+    margin-bottom: 15px;
 }
 
-.vendor-registration-form button:hover {
-    background-color: #2b9098;
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.document-item a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.document-item a:hover {
+    text-decoration: underline;
+}
+
+.bank-details {
+    background-color: #fff;
+    flex: 0 0 48%;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bank-details h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.bank-details p {
+    font-size: 14px;
+    padding: 10px 0;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.bank-details svg {
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+    .vendor-registration-container {
+        width: 100vw;
+        margin-left: 0; 
+    }
+
+    .info-block {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .below-cards {
+        flex-direction: column;
+    }
+
+    .verification-documents, .bank-details {
+        flex: 0 0 100%;
+        margin-bottom: 20px;
+    }
 }
