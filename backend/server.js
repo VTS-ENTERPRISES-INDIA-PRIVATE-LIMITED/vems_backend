@@ -29,7 +29,214 @@ con.connect((err) => {
     console.log('Connected to MySQL!');
 });
 
-// Get all vendors
+app.post('/add-vehicle', (req, res) => {
+    console.log('Request body:', req.body);
+
+    const { VehicleName, VehicleType, VehicleNumber, VendorName,  InsuranceNumber, Mileage, YearOfManufacturing, FuelType, SeatCapacity, VehicleImage } = req.body;
+
+    // if (!vehicleDetails) {
+    //     return res.status(400).json({ error: 'vehicleDetails is missing from the request body' });
+    // }
+
+    const query = `INSERT INTO Vehicle_Details1 (VehicleName, VehicleType, VehicleNumber, VendorName,  InsuranceNumber, Mileage, YearOfManufacturing, FuelType, SeatCapacity, VehicleImage) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+    con.query(query, [
+        VehicleName, VehicleType, VehicleNumber, VendorName,  InsuranceNumber, Mileage, YearOfManufacturing, FuelType, SeatCapacity, VehicleImage
+       
+    ], (err, result) => {
+        if (err) {
+            console.log(err);
+            console.error('Error inserting vehicle:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.status(201).json({ message: 'Vehicle added successfully', vehicleId: result.insertId });
+    });
+});
+
+
+// app.post('/import-vehicles', upload.single('file'), (req, res) => {
+//     console.log(req.file); 
+//     if (!req.file) {
+//         return res.status(400).json({ error: 'No file uploaded' });
+//     }
+//     const filePath = req.file.path;
+    
+//     try {
+//         const workbook = xlsx.readFile(filePath);
+//         const sheetName = workbook.SheetNames[0];
+//         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+//         const query = `INSERT INTO Vehicle_Details1 (VehicleName, VehicleType, VehicleNumber, VendorName, InsuranceNumber, Mileage, YearOfManufacturing, FuelType, SeatCapacity, VehicleImage) 
+//                        VALUES ?`;
+
+//         const values = sheetData.map(row => [
+//             row.VehicleName, 
+//             row.VehicleType, 
+//             row.VehicleNumber, 
+//             row.VendorName,
+//             row.InsuranceNumber,
+//             row.Mileage,
+//             row.YearOfManufacturing, 
+//             row.FuelType, 
+//             row.SeatCapacity, 
+//             row.VehicleImage,
+//         ]);
+
+//         con.query(query, [values], (err, result) => {
+//             fs.unlink(filePath, (unlinkErr) => {
+//                 if (unlinkErr) {
+//                     console.error('Error deleting file:', unlinkErr);
+//                 }
+//             });
+
+//             if (err) {
+//                 console.error('Error importing vehicles:', err);
+//                 return res.status(500).json({ error: 'Database error' });
+//             }
+//             res.status(201).json({ message: 'Vehicles imported successfully', insertedRows: result.affectedRows });
+//         });
+//     } catch (error) {
+//         console.error('Error reading file:', error);
+//         return res.status(500).json({ error: 'File processing error' });
+//     }
+// });
+
+
+
+
+app.get('/vehicles', (req, res) => {
+    const query = "SELECT * FROM Vehicle_Details1";
+    // const query  = `SELECT v., d. FROM Vehicle_Details v LEFT JOIN driver_details d ON v.vehicleId = d.vehicleId `;
+    con.query(query, (err, results) => {
+        if (err) {
+            console.error('Error retrieving vehicles:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+       
+        res.status(200).json(results);
+
+    });
+});
+
+
+app.get('/vehicles/:vehicleId', (req, res) => {
+    const vehicleId = req.params.vehicleId;
+
+    const query = `SELECT v., d. FROM Vehicle_Details1 v LEFT JOIN driver_details d ON v.vehicleId = d.vehicleId WHERE v.vehicleId = ? `
+    
+    con.query(query, [vehicleId], (err, result) => {
+        if (err) {
+            console.error('Error fetching vehicle details:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Vehicle not found' });
+        }
+        res.status(200).json(result[0]); 
+    });
+});
+
+app.delete('/vehicles/:vehicleId', (req, res) => {
+    const { vehicleId } = req.params;
+
+    const query = "DELETE FROM Vehicle_Details1 WHERE vehicleId = ?";
+
+    con.query(query, [vehicleId], (err, result) => {
+        if (err) {
+            console.error('Error deleting vehicle:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Vehicle not found' });
+        }
+
+        res.status(200).json({ message: 'Vehicle deleted successfully' });
+    });
+});
+
+
+app.put('/vehicles/:vehicleId', (req, res) => {
+    const { vehicleId } = req.params;
+
+    const {
+        VehicleName,
+        VehicleType,
+        VehicleNumber,
+        VendorName,
+        InsuranceNumber,
+        Mileage,
+        YearOfManufacturing,
+        FuelType,
+        SeatCapacity,
+        VehicleImage
+    } = req.body;
+
+    const query = `UPDATE Vehicle_Details1 SET 
+                    VehicleName = ?, 
+                    VehicleType = ?, 
+                    VehicleNumber = ?, 
+                    VendorName = ?, 
+                    InsuranceNumber = ?, 
+                    Mileage = ?, 
+                    YearOfManufacturing = ?, 
+                    FuelType = ?, 
+                    SeatCapacity = ?, 
+                    VehicleImage = ? 
+                   WHERE vehicleId = ?`;
+
+    con.query(query, [
+        VehicleName,
+        VehicleType,
+        VehicleNumber,
+        VendorName,
+        InsuranceNumber,
+        Mileage,
+        YearOfManufacturing,
+        FuelType,
+        SeatCapacity,
+        VehicleImage,
+        vehicleId
+    ], (err, result) => {
+        if (err) {
+            console.error('Error updating vehicle:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Vehicle not found' });
+        }
+
+        res.status(200).json({ message: 'Vehicle updated successfully' });
+    });
+});
+
+
+app.post('/trips/book/:EmployeeId', (req, res) => {
+    const { EmployeeId } = req.params; 
+    const { date, shift, trip_type } = req.body;
+
+    const employeeQuery = "SELECT EmployeeName, Address, latitude, longitude FROM employeedetails WHERE EmployeeId = ?";
+    con.query(employeeQuery, [EmployeeId], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (result.length === 0) return res.status(404).json({ error: 'Employee not found' });
+
+        const { EmployeeName, Address, latitude, longitude } = result[0];
+        const tripQuery = `INSERT INTO trips (EmployeeId, EmployeeName, Address, latitude, longitude, date, shift, trip_type) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        con.query(tripQuery, [EmployeeId, EmployeeName, Address, latitude, longitude, date, shift, trip_type], (err, result) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.status(201).json({ message: 'Trip booked successfully', data: result });
+        });
+    });
+});
+
+
+
+
 app.get('/user', (req, res) => {
     const sql = "SELECT * FROM vendor";
     con.query(sql, (err, result) => {
@@ -57,7 +264,7 @@ app.get('/user/:VendorName', (req, res) => {
     });
 });
 
-// Get vendor by name
+
 app.get('/vendor/:id', (req, res) => {
     const vendorId = req.params.id;
     const sql = "SELECT * FROM vendor WHERE VendorName = ?";
@@ -75,7 +282,7 @@ app.get('/vendor/:id', (req, res) => {
     });
 });
 
-// Register a new vendor
+
 app.post('/register', (req, res) => {
     try {
         const {
@@ -91,8 +298,8 @@ app.post('/register', (req, res) => {
             AgreementStartDate,
             AgreementEndDate,
             AgreementAmount,
-            AadharCardUpload, // Now as VARCHAR
-            AgreementUpload    // Now as VARCHAR
+            AadharCardUpload, 
+            AgreementUpload    
         } = req.body;
 
         const sql = 'INSERT INTO vendor (VendorName, ContactNumber, Email, Address, AadharCardUpload, AgreementUpload, AccountHandlerName, AccountNumber, BankName, BranchName, IFSCCode, AgreementStartDate, AgreementEndDate, AgreementAmount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -115,7 +322,7 @@ app.post('/register', (req, res) => {
     }
 });
 
-// Update vendor details
+
 app.put('/vendor/:VendorName', (req, res) => {
     const VendorName = req.params.VendorName;
     const {
@@ -130,8 +337,8 @@ app.put('/vendor/:VendorName', (req, res) => {
         AgreementStartDate,
         AgreementEndDate,
         AgreementAmount,
-        AadharCardUpload, // Now as VARCHAR
-        AgreementUpload    // Now as VARCHAR
+        AadharCardUpload, 
+        AgreementUpload    
     } = req.body;
 
     const sql = `UPDATE vendor SET 
@@ -156,7 +363,7 @@ app.put('/vendor/:VendorName', (req, res) => {
     });
 });
 
-// Delete vendor
+
 app.delete('/vendor/:VendorName', (req, res) => {
     const VendorName = req.params.VendorName;
 
