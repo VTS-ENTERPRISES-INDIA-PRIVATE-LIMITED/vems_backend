@@ -504,6 +504,111 @@ app.post('/register', (req, res) => {
     }
 });
 
+
+
+
+app.post("/addDriver", (req, res) => {
+    console.log('Request body:', req.body);
+
+    const { DriverName, VendorName, Contact, Email, Gender, DOB, Address, Experience, Aadhar, Pan, LicenceNumber, ProfilePic } = req.body;
+
+    const query = `
+        INSERT INTO Driver_Details1 
+        (DriverName, VendorName, Contact, Email, Gender, DOB, Address, Experience, Aadhar, Pan, LicenceNumber, ProfilePic) 
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
+
+    con.query(query, [DriverName, VendorName, Contact, Email, Gender, DOB, Address, Experience, Aadhar, Pan, LicenceNumber, ProfilePic], (err, result) => {
+        if (err) {
+            console.error('Error inserting driver:', err);
+            // Early return to prevent further code execution
+            return res.status(500).json({ message: "Error in adding driver" });
+        }
+        res.status(201).json({ message: 'Driver added successfully', driverId: result.insertId });
+    });
+});
+
+// POST API to add driver details from excel
+// app.post('/import-drivers', upload.single('file'), (req, res) => {
+//     const filePath = req.file.path;
+//     const workbook = xlsx.readFile(filePath);
+//     const sheetName = workbook.SheetNames[0];
+//     const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+//     const query = `INSERT INTO Driver_Details1 (DriverName,VendorName, Contact, Email, Gender, DOB, Address, Experience, Aadhar, Pan, LicenceNumber, ProfilePic) 
+//                     VALUES ?`;
+
+//     const values = sheetData.map(row => [
+//         row.DriverName, 
+//         row.VendorName,
+//         row.Contact,
+//         row.Email, 
+//         row.gender,
+//         row.DOB, 
+//         row.Address, 
+//         row.Experience,
+//         row.aadhar, 
+//         row.Pan, 
+//         row.licenceNumber,
+//         row.profilePic
+//     ]);
+
+//     con.query(query, [values], (err, result) => {
+       
+//         fs.unlink(filePath, (unlinkErr) => {
+//             if (unlinkErr) {
+//                 console.error('Error deleting file:', unlinkErr);
+//             }
+//         });
+
+//         if (err) {
+//             console.error('Error importing Driver data:', err);
+//             return res.status(500).json({ error: 'Database error' });
+//         }
+//         res.status(201).json({ message: 'Drivers Data imported successfully', insertedRows: result.affectedRows });
+//     });
+// });
+
+
+// GET API to retrieve a list of drivers
+app.get('/drivers', (req, res) => {
+    const query = 'SELECT * FROM Driver_Details1';
+   
+    con.query(query, (err, results) => {
+        if (err) {
+            console.error('Error retrieving driverss:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.status(200).json(results);
+    });
+});
+
+
+// Get vehicle details by driverId
+app.get('/drivers:driverId', (req, res) => {
+    const driverId = req.params.driverId;
+
+    const query = `SELECT 
+            d.*,  
+            v.* 
+        FROM 
+            Driver_Details1 d
+        LEFT JOIN 
+            Vehicle_Details v ON d.vehicleId = v.vehicleId 
+        WHERE 
+            d.driverId = ?`;
+    
+    con.query(query, [driverId], (err, result) => {
+        if (err) {
+            console.error('Error fetching driver details:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Driver not found' });
+        }
+        res.status(200).json(result[0]); // Returning the first (and only) object
+    });
+});
+
 const PORT = 8000;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
