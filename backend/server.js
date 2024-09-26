@@ -1148,7 +1148,7 @@ app.post('/updateemployee/:empId', (req, res) => {
         });
 });
 
-//delete employee by id
+
 app.post('/deleteemployee/:empId', (req, res) => {
     const empId = req.params.empId;
     const query = "DELETE FROM EmployeeDetails WHERE EmployeeId = ?";
