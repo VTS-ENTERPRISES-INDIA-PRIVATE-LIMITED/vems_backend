@@ -5,6 +5,7 @@ const cors = require('cors');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
+const moment = require('moment');
 
 
 const app = express();
@@ -33,14 +34,132 @@ con.connect((err) => {
     console.log('Connected to MySQL!');
 });
 
+const transporter1 = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'viharikha790@gmail.com', // Your email
+      pass: 'xujj gnfc abex iyvo', // Your email password
+    },
+  });
+  
+  // Function to calculate pickup time
+  const calculatePickupTime = (in_time, cumulativeTravelTime) => {
+    const inMoment = moment(in_time, 'HH:mm'); 
+    const pickupTimeMoment = inMoment.subtract(cumulativeTravelTime, 'minutes'); 
+    return pickupTimeMoment.format('h:mm A'); 
+  };
+  
+  // Function to send confirmation email
+  const sendConfirmationMail = async (employeeName, driverName, cabNumber, email, in_time, cumulativeTravelTime) => {
+    const calculatedPickupTime = calculatePickupTime(in_time, cumulativeTravelTime);
+  
+    const mailOptions = {
+      from: 'viharikha790@gmail.com', // Use your email
+      to: email,
+      subject: 'Confirmation of Cab Details',
+      html: `<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+          <div style="max-width: 700px; margin: 40px auto; background-color: #5bb450">
+            <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+              <div style="background-color: #5bb450; padding: 20px; border-radius: 8px 8px 0 0;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;text-align: center; font-weight: bold">Confirmation</h1>
+              </div>
+              <div style="padding: 20px; color: #333333; text-align: left;">
+                <p style="line-height: 1.6;">Dear ${employeeName},</p>
+                <p style="line-height: 1.6;">I hope this message finds you well.</p>
+                <p style="line-height: 1.6;">I wanted to confirm the details for your cab ride as follows:</p>
+                <p style="line-height: 1.6; margin: 0;">Cab Number: ${cabNumber}</p>
+                <p style="line-height: 1.6; margin: 0;">Driver Name: ${driverName}</p>
+                <p style="line-height: 1.6; margin: 0;">Pickup Time: ${calculatedPickupTime}</p>
+                <p style="line-height: 1.6; margin-top: 20px;">Please let me know if you have any questions or if there are any changes needed.</p>
+                <p style="line-height: 1.6;">Best regards,</p>
+                <p style="line-height: 1.0;"><strong>VTS Support Team</strong></p>
+                <p style="line-height: 1.0;">Contact No: 73050 96468</p>
+                <p style="line-height: 1.0;">Email ID: support@vtsenterprisesindia.com</p>
+              </div>
+              <div style="padding: 20px; text-align: center; color: #aaaaaa; font-size: 12px;">
+                <p>&copy; Copyright VTS Enterprises India Private Ltd, 2016</p>
+              </div>
+            </div>
+          </div>
+        </body>`, // Your existing HTML email content
+    };
+  
+    try {
+      const info = await transporter1.sendMail(mailOptions);
+      console.log('Email sent:', info.response);
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return { success: false, message: 'Error sending email: ' + error.message };
+    }
+  };
+  
+  // Endpoint to send emails and truncate the table
+  app.post('/send-emails', async (req, res) => {
+    const query = `
+      SELECT 
+        p.employee_name AS employeeName, 
+        p.VehicleNumber, 
+        e.employeeEmail, 
+        p.in_time, 
+        p.CumulativeTravelTime 
+      FROM 
+        ride_data p
+      JOIN 
+        modified_employee_data e 
+      ON 
+        p.employee_name = e.employeeName
+    `;
+  
+    con.query(query, async (err, results) => {
+      if (err) {
+        console.error('Error fetching data from MySQL:', err);
+        return res.status(500).json({ success: false, message: 'Database error' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({ success: false, message: 'No users found to send emails to.' });
+      }
+  
+      const newlyAllocatedEmployees = results.filter(user => user.CumulativeTravelTime > 0);
+      
+      if (newlyAllocatedEmployees.length === 0) {
+        return res.status(404).json({ success: false, message: 'No newly allocated users found.' });
+      }
+  
+      for (const user of newlyAllocatedEmployees) {
+        const { employeeName, VehicleNumber: cabNumber, employeeEmail: email, in_time, CumulativeTravelTime: cumulativeTravelTime } = user;
+  
+        const resultMail = await sendConfirmationMail(employeeName, employeeName, cabNumber, email, in_time, cumulativeTravelTime);
+  
+        if (!resultMail.success) {
+          console.log(`Failed to send email to ${employeeName}: ${resultMail.message}`);
+          return res.status(500).json({ success: false, message: `Failed to send email to ${employeeName}` });
+        }
+      }
+  
+      // Truncate the ride_data table after sending all emails
+      con.query('TRUNCATE TABLE ride_data', (truncateErr) => {
+        if (truncateErr) {
+          console.error('Error truncating table:', truncateErr);
+          return res.status(500).json({ success: false, message: 'Error truncating table' });
+        }
+        console.log('Table truncated successfully');
+        res.json({ success: true, message: 'Emails sent and table truncated successfully.' });
+      });
+    });
+  });
+
+
+
 app.post('/add-vehicle', (req, res) => {
     console.log('Request body:', req.body);
 
     const { VehicleName, VehicleType, VehicleNumber, VendorName,  InsuranceNumber, Mileage, YearOfManufacturing, FuelType, SeatCapacity, VehicleImage } = req.body;
 
-    // if (!vehicleDetails) {
-    //     return res.status(400).json({ error: 'vehicleDetails is missing from the request body' });
-    // }
+    
 
     const query = `INSERT INTO Vehicle_Details1 (VehicleName, VehicleType, VehicleNumber, VendorName,  InsuranceNumber, Mileage, YearOfManufacturing, FuelType, SeatCapacity, VehicleImage) 
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -721,7 +840,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
         );
     `;
 
-    db.query(createTableQuery, (err, result) => {
+    con.query(createTableQuery, (err, result) => {
         if (err) throw err;
         console.log('Table created or already exists.');
     });
@@ -762,7 +881,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
             row.EmployeeImage
         ];
 
-        db.query(query, values, (err, result) => {
+        con.query(query, values, (err, result) => {
             if (err) {
                 console.error('Error inserting data into MySQL:', err);
             } else {
@@ -1039,7 +1158,7 @@ app.post('/deleteemployee/:empId', (req, res) => {
     })
 });
 
-//show all employee details
+
 app.get('/showemployee', (req, res) => {
     const query = "SELECT * FROM EmployeeDetails";
     con.query(query, (err, result) => {
@@ -1047,8 +1166,16 @@ app.get('/showemployee', (req, res) => {
         res.send(result);
     })
 });
+//show all trip request details
+app.get('/showtrips', (req, res) => {
+    const query = "SELECT * FROM CabBookingTable";
+    db.query(query, (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.send(result);
+    })
+});
 
-const PORT = 8000;
+const PORT = 8001;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
