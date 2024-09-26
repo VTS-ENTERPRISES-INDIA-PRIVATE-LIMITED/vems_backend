@@ -591,7 +591,7 @@ app.delete('/escorts/:EscortName', (req, res) => {
     });
 });
 
-app.post('/register', (req, res) => {
+app.post('/register1', (req, res) => {
     try {
         const {
             EscortName,
@@ -1175,7 +1175,7 @@ app.get('/showtrips', (req, res) => {
     })
 });
 
-const PORT = 8001;
+const PORT = 8000;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
