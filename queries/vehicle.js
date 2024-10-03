@@ -9,10 +9,10 @@ const connection = require('../db');
 router.post('/addVehicle', (req, res) => {
 	const VehicleAddedDate = new Date().toISOString().split('T')[0];
 	const { VehicleName, VehicleType, VehicleNumber, VendorId, VehicleInsuranceNumber, VehicleMileageRange, VehicleManufacturedYear, VehicleFuelType, VehicleSeatCapacity, VehicleImage } = req.body;
-	const query = `INSERT INTO VehicleDetails (VehicleName, VehicleType, VehicleNumber, VendorId, VehicleInsuranceNumber, VehicleMileageRange, VehicleManufacturedYear, VehicleFuelType, VehicleSeatCapacity, VehicleImage, VehicleAddedDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+	const query = `INSERT INTO VehicleDetails (VehicleName, VehicleType, VehicleNumber, VendorId, VehicleInsuranceNumber, VehicleMileageRange, VehicleManufacturedYear, VehicleFuelType, VehicleSeatCapacity, VehicleImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
 	connection.query(query, [
-		VehicleName, VehicleType, VehicleNumber, VendorId, VehicleInsuranceNumber, VehicleMileageRange, VehicleManufacturedYear, VehicleFuelType, VehicleSeatCapacity, VehicleImage, VehicleAddedDate
+		VehicleName, VehicleType, VehicleNumber, VendorId, VehicleInsuranceNumber, VehicleMileageRange, VehicleManufacturedYear, VehicleFuelType, VehicleSeatCapacity, VehicleImage
 	], (err, result) => {
 		if (err) {
 			console.log(err);
