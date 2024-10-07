@@ -55,7 +55,7 @@ const acceptEmailTemplate = (AdminName, AdminMail, AdminPassword) => `
             <p style="font-size: 16px; line-height: 1.6;"><strong>Email:</strong> ${AdminMail}</p>
             <p style="font-size: 16px; line-height: 1.6;"><strong>Password:</strong> ${AdminPassword}</p>
             <div style="margin-top: 20px; text-align: center;">
-               <a href="http://localhost:3000/login" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Access the Portal</a>
+               <a href="${process.env.FRONTEND_END_URL}/login" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Access the Portal</a>
             </div>
          </div>
          <div style="padding: 20px; font-size: 14px; color: #777; text-align: center;">
@@ -76,7 +76,7 @@ const rejectEmailTemplate = (name) => `
             <p style="font-size: 16px; line-height: 1.6;">Unfortunately, your request to become an admin for the Driver Portal has been rejected.</p>
             <p style="font-size: 16px; line-height: 1.6;">Thank you for your interest, and we wish you all the best in your future endeavors.</p>
             <div style="margin-top: 20px; text-align: center;">
-               <a href="http://localhost:3000/" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Return to Homepage</a>
+               <a href="${process.env.FRONTEND_END_URL}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Return to Homepage</a>
             </div>
          </div>
          <div style="padding: 20px; font-size: 14px; color: #777; text-align: center;">
